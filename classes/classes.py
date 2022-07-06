@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 from marshmallow_dataclass import class_schema
 
 from config import DATA_PATH, HEROES_FILE_NAME
-from ..utils import json_loader
+from ..utils import json_loader, entity_update
 
 from skills import UnitSkill
 
@@ -29,8 +29,14 @@ data = json_loader(HEROES_PATH)
 
 try:
     WarriorEntity = UnitSchema().load(data.get('heroes').get('Воин'))
+    WarriorEntity = entity_update(WarriorEntity)
+
     ThiefEntity = UnitSchema().load(data.get('heroes').get('Вор'))
+    ThiefEntity = entity_update(ThiefEntity)
+
     MagicianEntity = UnitSchema().load(data.get('heroes').get('Маг'))
+    MagicianEntity = entity_update(MagicianEntity)
+
 except ValidationError as err:
     print('УПС! Такого персонажа нет в данных.')
 

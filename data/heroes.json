@@ -7,7 +7,7 @@
       "attack": 0.8,
       "stamina": 0.9,
       "armor": 1.2,
-      "skill": "Свирепый пинок"
+      "skill": "FuryPunch"
     },
     "Вор": {
       "name": "Вор",
@@ -16,7 +16,7 @@
       "attack": 1.5,
       "stamina": 1.2,
       "armor": 1.0,
-      "skill": "Мощный укол"
+      "skill": "HardShot"
     },
     "Маг": {
       "name": "Маг",
@@ -25,7 +25,7 @@
       "attack": 1.0,
       "stamina": 1.5,
       "armor": 1.9,
-      "skill": "Некромантский пук"
+      "skill": "NecromantFart"
     }
   }
 }
