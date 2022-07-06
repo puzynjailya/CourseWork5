@@ -2,13 +2,12 @@ import os
 import random
 from dataclasses import dataclass
 from typing import List, Union, Optional
-from random import uniform
 import marshmallow_dataclass
 import marshmallow
 
 
 from config import EQUIPMENT_FILE_NAME, DATA_PATH
-from utils import json_loader
+from scripts.utils import json_loader
 
 
 @dataclass

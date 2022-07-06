@@ -1,9 +1,6 @@
 import json
 from json import JSONDecodeError
 from typing import Optional
-from classes.skills import *
-
-from classes.classes import UnitClass
 
 
 def json_loader(file_path: str) -> Optional[dict]:
@@ -17,15 +14,4 @@ def json_loader(file_path: str) -> Optional[dict]:
         except (FileNotFoundError, FileExistsError):
             print('Ошибка! Файл не найден или вообще не существует.')
             return None
-
-
-def entity_update(unit: UnitClass) -> UnitClass:
-    skill_name = unit.skill
-    if skill_name == 'FuryPunch':
-        unit.skill = FuryPunch()
-    elif skill_name == 'HardShot':
-        unit.skill = HardShot()
-    elif skill_name == 'NecromantFart':
-        unit.skill = NecromantFart()
-    return unit
 

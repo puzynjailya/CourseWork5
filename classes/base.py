@@ -1,6 +1,4 @@
-from typing import Union
-
-from unit import BaseUnit
+from classes.unit import BaseUnit
 from config import STAMINA_RECOVERY
 
 
@@ -30,7 +28,7 @@ class Arena(metaclass=BaseSingleton):
             self.battle_result = f'Игрок {self.player.name} проиграл битву'
             self._end_game()
 
-        elif self.enemy.hp <=0:
+        elif self.enemy.hp <= 0:
             self.battle_result = f"Игрок {self.player.name} выиграл битву"
             self._end_game()
 
@@ -39,28 +37,29 @@ class Arena(metaclass=BaseSingleton):
             self._end_game()
 
     def _stamina_regeneration(self):
-        # TODO регенерация здоровья и стамины для игрока и врага за ход
-        # TODO в этом методе к количеству стамины игрока и врага прибавляется константное значение.
-        # TODO главное чтобы оно не привысило максимальные значения (используйте if)
-        if self.player.unit_class.max_stamina <= STAMINA_RECOVERY + self.player.stamina:
-            self.player.stamina = self.player.unit_class.max_stamina
-        else:
-            self.player.stamina +=
 
-    def next_turn(self) -> Union[str, int]:
-        # TODO СЛЕДУЮЩИЙ ХОД -> return result | return self.enemy.hit(self.player)
-        # TODO срабатывает когда игроп пропускает ход или когда игрок наносит удар.
-        # TODO создаем поле result и проверяем что вернется в результате функции self._check_players_hp
-        # TODO если result -> возвращаем его
-        # TODO если же результата пока нет и после завершения хода игра продолжается,
-        # TODO тогда запускаем процесс регенирации стамины и здоровья для игроков (self._stamina_regeneration)
-        # TODO и вызываем функцию self.enemy.hit(self.player) - ответный удар врага
+        if self.player.unit_class.max_stamina <= STAMINA_RECOVERY * self.player.unit_class.stamina + self.player.stamina:
+            self.player.stamina = self.player.unit_class.max_stamina
+
+        else:
+            if self.enemy.stamina >= self.enemy.armor.stamina_per_turn:
+                self.player.stamina += (STAMINA_RECOVERY * self.player.unit_class.stamina) - \
+                                       self.player.weapon.stamina_per_hit
+                self.enemy.stamina += (STAMINA_RECOVERY * self.enemy.unit_class.stamina) - \
+                                      self.enemy.armor.stamina_per_turn
+            else:
+                self.player.stamina = self.player.stamina - self.player.weapon.stamina_per_hit + (
+                        STAMINA_RECOVERY * self.player.unit_class.stamina)
+                self.enemy.stamina += STAMINA_RECOVERY * self.enemy.unit_class.stamina
+
+    def next_turn(self) -> str:
+
         turn_result = self._check_players_hp()
         if turn_result:
             return turn_result
         else:
             self._stamina_regeneration()
-            self.enemy.hit(self.player)
+            return self.enemy.hit(self.player)
 
     def _end_game(self) -> str:
         self._instances = {}
@@ -69,16 +68,10 @@ class Arena(metaclass=BaseSingleton):
 
     def player_hit(self) -> str:
         hit_result = self.player.hit(self.enemy)
-
-        # TODO КНОПКА УДАР ИГРОКА -> return result: str
-        # TODO получаем результат от функции self.player.hit
-        # TODO запускаем следующий ход
-        # TODO возвращаем результат удара строкой
-        pass
+        enemy_result = self.next_turn()
+        return f'Результат мясорубки:\n{hit_result}\n{enemy_result}'
 
     def player_use_skill(self):
-        # TODO КНОПКА ИГРОК ИСПОЛЬЗУЕТ УМЕНИЕ
-        # TODO получаем результат от функции self.use_skill
-        # TODO включаем следующий ход
-        # TODO возвращаем результат удара строкой
-        pass
+        skill_result = self.player.use_skill(self.enemy)
+        enemy_result = self.next_turn()
+        return f'Результат мясорубки:\n{skill_result}\n{enemy_result}'
