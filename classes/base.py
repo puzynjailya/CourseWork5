@@ -1,5 +1,5 @@
 from classes.unit import BaseUnit
-from config import STAMINA_RECOVERY
+from config import Config
 
 
 class BaseSingleton(type):
@@ -38,19 +38,20 @@ class Arena(metaclass=BaseSingleton):
 
     def _stamina_regeneration(self):
 
-        if self.player.unit_class.max_stamina <= STAMINA_RECOVERY * self.player.unit_class.stamina + self.player.stamina:
+        if self.player.unit_class.max_stamina <= Config().STAMINA_RECOVERY * self.player.unit_class.stamina + \
+                self.player.stamina:
             self.player.stamina = self.player.unit_class.max_stamina
 
         else:
             if self.enemy.stamina >= self.enemy.armor.stamina_per_turn:
-                self.player.stamina += (STAMINA_RECOVERY * self.player.unit_class.stamina) - \
+                self.player.stamina += (Config().STAMINA_RECOVERY * self.player.unit_class.stamina) - \
                                        self.player.weapon.stamina_per_hit
-                self.enemy.stamina += (STAMINA_RECOVERY * self.enemy.unit_class.stamina) - \
+                self.enemy.stamina += (Config().STAMINA_RECOVERY * self.enemy.unit_class.stamina) - \
                                       self.enemy.armor.stamina_per_turn
             else:
                 self.player.stamina = self.player.stamina - self.player.weapon.stamina_per_hit + (
-                        STAMINA_RECOVERY * self.player.unit_class.stamina)
-                self.enemy.stamina += STAMINA_RECOVERY * self.enemy.unit_class.stamina
+                        Config().STAMINA_RECOVERY * self.player.unit_class.stamina)
+                self.enemy.stamina += Config().STAMINA_RECOVERY * self.enemy.unit_class.stamina
 
     def next_turn(self) -> str:
 

@@ -5,11 +5,10 @@ from typing import Union
 from marshmallow import ValidationError
 from marshmallow_dataclass import class_schema
 
-from config import DATA_PATH, HEROES_FILE_NAME
+from config import Config
 from scripts.utils import json_loader
-from scripts.entity_update import *
 
-from skills import UnitSkill
+from classes.skills import UnitSkill, FuryPunch, HardShot, NecromantFart
 
 
 @dataclass
@@ -18,14 +17,14 @@ class UnitClass:
     max_health: Union[float | int]
     max_stamina: Union[float | int]
     attack: Union[float | int]
-    armor: Union[float | int]
     stamina: Union[float | int]
-    skill: UnitSkill
+    armor: Union[float | int]
+    skill: Union[UnitSkill | str]
 
 
 UnitSchema = class_schema(UnitClass)
 
-HEROES_PATH = os.path.join(DATA_PATH, HEROES_FILE_NAME)
+HEROES_PATH = os.path.join(Config().DATA_PATH, Config().HEROES_FILE_NAME)
 data = json_loader(HEROES_PATH)
 
 try:

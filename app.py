@@ -1,20 +1,33 @@
 from flask import Flask, render_template
+from flask_restx import Api
 
 from classes.base import Arena
 from classes.unit import BaseUnit
 
-app = Flask(__name__, template_folder='templates')
-
-heroes = {}
-
-arena = Arena()
-
-
-@app.route("/")
-def menu_page():
-    return render_template('index.html')
+# Функция создания основного объекта app
+from config import Config
+from views.choose_enemy import ChooseEnemyView
+from views.choose_hero import ChooseHeroView
+from views.fight import fight_ns
+from views.index import StartPageView
 
 
+def create_app(config):
+    app = Flask(__name__, template_folder='templates')
+    app.config.from_object(config)
+    register_extensions(app)
+    return app
+
+
+# Функция подключения расширений (Flask-SQLAlchemy, Flask-RESTx, ...)
+def register_extensions(app):
+    app.add_url_rule('/', view_func=StartPageView.as_view('index'))
+    app.add_url_rule('/choose-hero/', view_func=ChooseHeroView.as_view('hero_choosing'))
+    app.add_url_rule('/choose-enemy/', view_func=ChooseEnemyView.as_view('enemy_choosing'))
+    #app.add_namespace(fight_ns)
+    #app.add_namespace(index_ns)
+
+'''
 @app.route("/fight/")
 def start_fight():
     arena.start_game(player=heroes.get('player'), enemy=heroes.get('enemy'))
@@ -64,7 +77,11 @@ def choose_enemy():
     # TODO также на GET отрисовываем форму.
     # TODO а на POST отправляем форму и делаем редирект на начало битвы
     pass
+'''
+
+app = create_app(Config())
+app.debug = True
 
 
-if __name__ == "__main__":
-    app.run()
+if __name__ == '__main__':
+    app.run(host="localhost", port=5000, debug=True)

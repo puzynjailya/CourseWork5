@@ -1,11 +1,13 @@
-from classes.base import Arena
+import os.path
 
-DATA_PATH = 'data/'
-HEROES_FILE_NAME = 'heroes.json'
-EQUIPMENT_FILE_NAME = 'equipment.json'
-STAMINA_RECOVERY = 1
 
-arena = Arena()
+class Config(object):
+    DEBUG = True
+    DATA_PATH = os.path.join(os.getcwd(),'data')
+    HEROES_FILE_NAME = 'heroes.json'
+    EQUIPMENT_FILE_NAME = 'equipment.json'
+    STAMINA_RECOVERY = 1
+    heroes = {}
 
 
 

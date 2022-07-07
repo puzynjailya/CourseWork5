@@ -6,7 +6,7 @@ import marshmallow_dataclass
 import marshmallow
 
 
-from config import EQUIPMENT_FILE_NAME, DATA_PATH
+from config import Config
 from scripts.utils import json_loader
 
 
@@ -66,7 +66,7 @@ class Equipment:
 
     @staticmethod
     def _get_equipment_data() -> EquipmentData:
-        data = json_loader(os.path.join(DATA_PATH, EQUIPMENT_FILE_NAME))
+        data = json_loader(os.path.join(Config().DATA_PATH, Config().EQUIPMENT_FILE_NAME))
         equipment_schema = marshmallow_dataclass.class_schema(EquipmentData)
         try:
             return equipment_schema().load(data)

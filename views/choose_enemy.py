@@ -9,11 +9,11 @@ from classes.unit import PlayerUnit
 equipment = Equipment()
 
 
-class ChooseHeroView(MethodView):
+class ChooseEnemyView(MethodView):
 
     def get(self):
         result = {
-            "header": 'Здесь нужно выбрать своего героя',  # для названия страниц
+            "header": 'Здесь нужно выбрать соперника',  # для названия страниц
             "classes": unit_classes,
             "weapons": equipment.get_weapons_names(),
             "armors": equipment.get_armors_names()
@@ -35,5 +35,5 @@ class ChooseHeroView(MethodView):
         else:
             player.equip_weapon(equipment.get_weapon(player_weapon))
             player.equip_armor(equipment.get_armor(player_armor))
-        return redirect(url_for('enemy_choosing'))
+        return redirect(url_for('fight'))
 
