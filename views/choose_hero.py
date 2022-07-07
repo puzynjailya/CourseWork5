@@ -4,7 +4,7 @@ from flask.views import MethodView
 from classes.classes import unit_classes
 from classes.equipment import Equipment
 from classes.unit import PlayerUnit
-
+from config import Config
 
 equipment = Equipment()
 
@@ -35,5 +35,6 @@ class ChooseHeroView(MethodView):
         else:
             player.equip_weapon(equipment.get_weapon(player_weapon))
             player.equip_armor(equipment.get_armor(player_armor))
+            Config().heroes['player'] = player
         return redirect(url_for('enemy_choosing'))
 

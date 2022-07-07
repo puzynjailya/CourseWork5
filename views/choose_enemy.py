@@ -3,8 +3,8 @@ from flask.views import MethodView
 
 from classes.classes import unit_classes
 from classes.equipment import Equipment
-from classes.unit import PlayerUnit
-
+from classes.unit import EnemyUnit
+from config import Config
 
 equipment = Equipment()
 
@@ -21,19 +21,20 @@ class ChooseEnemyView(MethodView):
         return render_template('hero_choosing.html', result=result)
 
     def post(self):
-        player_name = request.form['name']
-        player_unit_class = request.form['unit_class']
-        player_weapon = request.form['weapon']
-        player_armor = request.form['armor']
+        enemy_name = request.form['name']
+        enemy_unit_class = request.form['unit_class']
+        enemy_weapon = request.form['weapon']
+        enemy_armor = request.form['armor']
 
-        player = PlayerUnit(
-            name=player_name,
-            unit_class=unit_classes.get(player_unit_class),
+        enemy = EnemyUnit(
+            name=enemy_name,
+            unit_class=unit_classes.get(enemy_unit_class),
         )
-        if player_weapon not in equipment.get_weapons_names() or player_armor not in equipment.get_armors_names():
+        if enemy_weapon not in equipment.get_weapons_names() or enemy_armor not in equipment.get_armors_names():
             return abort(406)
         else:
-            player.equip_weapon(equipment.get_weapon(player_weapon))
-            player.equip_armor(equipment.get_armor(player_armor))
+            enemy.equip_weapon(equipment.get_weapon(enemy_weapon))
+            enemy.equip_armor(equipment.get_armor(enemy_armor))
+            Config().heroes['enemy'] = enemy
         return redirect(url_for('fight'))
 

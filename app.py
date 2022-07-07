@@ -8,7 +8,7 @@ from classes.unit import BaseUnit
 from config import Config
 from views.choose_enemy import ChooseEnemyView
 from views.choose_hero import ChooseHeroView
-from views.fight import fight_ns
+from views.fight import StartFightView
 from views.index import StartPageView
 
 
@@ -24,7 +24,7 @@ def register_extensions(app):
     app.add_url_rule('/', view_func=StartPageView.as_view('index'))
     app.add_url_rule('/choose-hero/', view_func=ChooseHeroView.as_view('hero_choosing'))
     app.add_url_rule('/choose-enemy/', view_func=ChooseEnemyView.as_view('enemy_choosing'))
-    #app.add_namespace(fight_ns)
+    app.add_url_rule('/fight/', view_func=StartFightView.as_view('fight'))
     #app.add_namespace(index_ns)
 
 '''
