@@ -4,7 +4,7 @@ from flask.views import MethodView
 from classes.classes import unit_classes
 from classes.equipment import Equipment
 from classes.unit import EnemyUnit
-from config import Config
+from views.choose_hero import heroes
 
 equipment = Equipment()
 
@@ -21,6 +21,7 @@ class ChooseEnemyView(MethodView):
         return render_template('hero_choosing.html', result=result)
 
     def post(self):
+        global heroes
         enemy_name = request.form['name']
         enemy_unit_class = request.form['unit_class']
         enemy_weapon = request.form['weapon']
@@ -35,6 +36,8 @@ class ChooseEnemyView(MethodView):
         else:
             enemy.equip_weapon(equipment.get_weapon(enemy_weapon))
             enemy.equip_armor(equipment.get_armor(enemy_armor))
-            Config().heroes['enemy'] = enemy
+            heroes['enemy'] = enemy
         return redirect(url_for('fight'))
+
+
 

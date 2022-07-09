@@ -17,6 +17,7 @@ class Arena(metaclass=BaseSingleton):
     player = None
     enemy = None
     game_is_running: bool = False
+    battle_result = None
 
     def start_game(self, player: BaseUnit, enemy: BaseUnit) -> None:
         self.game_is_running = True
@@ -24,55 +25,57 @@ class Arena(metaclass=BaseSingleton):
         self.enemy = enemy
 
     def _check_players_hp(self) -> str:
+
+        if self.player.hp > 0 and self.enemy.hp > 0:
+            return None
+
         if self.player.hp <= 0:
             self.battle_result = f'Игрок {self.player.name} проиграл битву'
-            self._end_game()
 
         elif self.enemy.hp <= 0:
             self.battle_result = f"Игрок {self.player.name} выиграл битву"
-            self._end_game()
 
         elif self.player.hp <= 0 and self.enemy.hp <= 0:
             self.battle_result = 'Ничья'
-            self._end_game()
+
+        self._end_game()
+        return self.battle_result
 
     def _stamina_regeneration(self):
+        pl_max_stamina = self.player.unit_class.max_stamina
+        en_max_stamina = self.enemy.unit_class.max_stamina
 
-        if self.player.unit_class.max_stamina <= Config().STAMINA_RECOVERY * self.player.unit_class.stamina + \
-                self.player.stamina:
+        # player
+        if pl_max_stamina < Config().STAMINA_RECOVERY * self.player.unit_class.stamina + self.player.stamina:
             self.player.stamina = self.player.unit_class.max_stamina
-
         else:
-            if self.enemy.stamina >= self.enemy.armor.stamina_per_turn:
-                self.player.stamina += (Config().STAMINA_RECOVERY * self.player.unit_class.stamina) - \
-                                       self.player.weapon.stamina_per_hit
-                self.enemy.stamina += (Config().STAMINA_RECOVERY * self.enemy.unit_class.stamina) - \
-                                      self.enemy.armor.stamina_per_turn
-            else:
-                self.player.stamina = self.player.stamina - self.player.weapon.stamina_per_hit + (
-                        Config().STAMINA_RECOVERY * self.player.unit_class.stamina)
-                self.enemy.stamina += Config().STAMINA_RECOVERY * self.enemy.unit_class.stamina
+            self.player.stamina += Config().STAMINA_RECOVERY * self.player.unit_class.stamina
+
+        # enemy
+        if en_max_stamina < Config().STAMINA_RECOVERY * self.enemy.unit_class.stamina + self.enemy.stamina:
+            self.enemy.stamina = self.enemy.unit_class.max_stamina
+        else:
+            self.enemy.stamina += Config().STAMINA_RECOVERY * self.enemy.unit_class.stamina
 
     def next_turn(self) -> str:
 
-        turn_result = self._check_players_hp()
-        if turn_result:
-            return turn_result
-        else:
+        if self._check_players_hp() is not None:
+            return self._check_players_hp()
+
+        if self.game_is_running:
             self._stamina_regeneration()
             return self.enemy.hit(self.player)
 
     def _end_game(self) -> str:
         self._instances = {}
         self.game_is_running = False
-        return self.battle_result
 
     def player_hit(self) -> str:
         hit_result = self.player.hit(self.enemy)
-        enemy_result = self.next_turn()
-        return f'Результат мясорубки:\n{hit_result}\n{enemy_result}'
+        turn_result = self.next_turn()
+        return f'Результат мясорубки:\n{hit_result}\n{turn_result}'
 
     def player_use_skill(self):
         skill_result = self.player.use_skill(self.enemy)
-        enemy_result = self.next_turn()
-        return f'Результат мясорубки:\n{skill_result}\n{enemy_result}'
+        turn_result = self.next_turn()
+        return f'Результат мясорубки:\n{skill_result}\n{turn_result}'

@@ -63,7 +63,7 @@ class HardShot(UnitSkill):
 
 class NecromantFart(UnitSkill):
     name = 'Некромантский пук'
-    stamina = 2
+    stamina = 3
     damage = 7
 
     def skill_effect(self):
